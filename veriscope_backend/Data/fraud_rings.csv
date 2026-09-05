@@ -1,0 +1,11 @@
+ring_id,ring_type,ring_size
+RING_001,device_ring,10
+RING_002,ip_ring,10
+RING_003,card_ring,10
+RING_004,multi_attribute_ring,4
+RING_005,device_ring,6
+RING_006,ip_ring,6
+RING_007,card_ring,8
+RING_008,multi_attribute_ring,5
+RING_009,device_ring,6
+RING_010,ip_ring,4
