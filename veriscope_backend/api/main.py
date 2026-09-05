@@ -26,7 +26,8 @@ app.add_middleware(
     CORSMiddleware,
     allow_origins=[
         "http://localhost:5173",
-        "http://127.0.0.1:5173"
+        "http://127.0.0.1:5173",
+        "http://localhost:5174"
     ],
     allow_credentials=True,
     allow_methods=["*"],
@@ -73,6 +74,32 @@ def get_metrics():
         "behavioral_anomalies": behavioral_anomalies,
         "normal_transactions": normal_transactions
     }
+
+@app.get("/audit-trail")
+def get_audit_trail(limit: int = 20):
+
+    db: Session = SessionLocal()
+
+    try:
+        logs = (
+            db.query(AuditLog)
+            .order_by(AuditLog.timestamp.desc())
+            .limit(limit)
+            .all()
+        )
+        return [
+            {
+                "transaction_id": log.transaction_id,
+                "action": log.action,
+                "decision": log.decision,
+                "risk_score": log.risk_score,
+                "timestamp": log.timestamp
+            }
+            for log in logs
+        ]
+
+    finally:
+        db.close()
 
 @app.get("/transactions/{transaction_id}/risk")
 def analyze_transaction(transaction_id: str):

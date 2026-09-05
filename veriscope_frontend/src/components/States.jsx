@@ -25,7 +25,7 @@ export function ErrorState({ error }) {
       <div className="mx-auto w-10 h-10 rounded-full bg-rose-500/10 border border-rose-500/20 flex items-center justify-center text-rose-400 mb-3">
         <AlertTriangle className="h-5 w-5" />
       </div>
-      <h3 className="text-sm font-semibold text-rose-300 uppercase font-mono">Analysis Execution Failed</h3>
+      <h3 className="text-sm font-semibold text-rose-300 uppercase font-mono">TRANSACTION NOT FOUND </h3>
       <p className="text-xs text-slate-400 max-w-md mx-auto mt-1 leading-relaxed">
         {error}
       </p>

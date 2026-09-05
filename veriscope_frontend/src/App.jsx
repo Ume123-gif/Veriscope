@@ -7,84 +7,122 @@ import DecisionBanner from './components/DecisionBanner';
 import RiskScores from './components/RiskScores';
 import ShapExplanation from './components/ShapExplanation';
 import NetworkIntelligence from './components/NetworkIntelligence';
-import { EmptyState, ErrorState, SkeletonLoader } from './components/States';
+import AuditTrail from './components/AuditTrail';
 
 import { fetchTransactionRisk } from './services/api';
 
+import {
+  EmptyState,
+  ErrorState,
+  SkeletonLoader
+} from './components/States';
+
 export default function App() {
+  const [activeTab, setActiveTab] = useState('investigation');
+
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
   const handleSearch = async (transactionId) => {
+    if (!transactionId?.trim()) {
+      return;
+    }
+
     setLoading(true);
     setError(null);
+    setData(null);
 
     try {
-      const result = await fetchTransactionRisk(transactionId);
+      const result = await fetchTransactionRisk(transactionId.trim());
       setData(result);
     } catch (err) {
-      setError(
-        err.message ||
-          'An unexpected failure occurred while inspecting this transaction.'
-      );
-      setData(null);
+      setError(err.message || 'Unable to analyze transaction.');
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen bg-radar-950 flex flex-col selection:bg-cyan-500/20 selection:text-cyan-300">
+    <div className="min-h-screen bg-radar-950 text-slate-200">
+      
+      {/* Top Navigation */}
+      <Navbar
+        activeTab={activeTab}
+        setActiveTab={setActiveTab}
+      />
 
-      <Navbar />
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
 
-      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
-
+        {/* Platform Overview */}
         <OverviewStats />
 
-        <div>
-          <SearchBar
-            onSearch={handleSearch}
-            loading={loading}
-          />
+        {/* Investigation Tab */}
+        {activeTab === 'investigation' ? (
+          <div className="mt-8">
 
-          {loading && <SkeletonLoader />}
+            {/* Transaction Search */}
+            <SearchBar
+              onSearch={handleSearch}
+              loading={loading}
+            />
 
-          {error && !loading && (
-            <ErrorState error={error} />
-          )}
+            {/* Loading State */}
+            {loading && (
+              <div className="mt-6">
+                <SkeletonLoader />
+              </div>
+            )}
 
-          {!loading && !error && !data && (
-            <EmptyState />
-          )}
+            {/* Error State */}
+            {error && !loading && (
+              <div className="mt-6">
+                <ErrorState error={error} />
+              </div>
+            )}
 
-          {!loading && !error && data && (
-            <div className="space-y-6">
+            {/* Initial Empty State */}
+            {!loading && !error && !data && (
+              <div className="mt-6">
+                <EmptyState />
+              </div>
+            )}
 
-              <DecisionBanner data={data} />
+            {/* Investigation Results */}
+            {!loading && !error && data && (
+              <div className="mt-6 space-y-6">
 
-              <RiskScores data={data} />
+                {/* Final Decision */}
+                <DecisionBanner data={data} />
 
-              <ShapExplanation
-                reasons={data.shap_reasons}
-              />
+                {/* Risk Component Scores */}
+                <RiskScores data={data} />
 
-              <NetworkIntelligence
-                communityId={data.community_id}
-                graphScore={data.graph_score ?? 0}
-              />
+                {/* Explainable AI */}
+                <ShapExplanation
+                  reasons={data.shap_reasons}
+                />
 
-            </div>
-          )}
-        </div>
+                {/* Fraud Network Intelligence */}
+                <NetworkIntelligence
+                  communityId={data.community_id}
+                  graphScore={data.graph_score ?? 0}
+                />
+
+              </div>
+            )}
+
+          </div>
+        ) : (
+
+          /* Investigation History Tab */
+          <div className="mt-8">
+            <AuditTrail />
+          </div>
+
+        )}
 
       </main>
-
-      <footer className="border-t border-radar-border bg-radar-950 py-4 text-center text-xs font-mono text-slate-600">
-        VERISCOPE // AUTONOMOUS TRANSACTION VERIFICATION PLATFORM
-      </footer>
-
     </div>
   );
 }

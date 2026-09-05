@@ -1,11 +1,11 @@
 import React from 'react';
-import { ShieldCheck, Terminal } from 'lucide-react';
+import { ShieldCheck, Terminal, History } from 'lucide-react';
 
-export default function Navbar() {
+export default function Navbar({ activeTab, setActiveTab }) {
   return (
     <header className="sticky top-0 z-50 border-b border-radar-border bg-radar-950/80 backdrop-blur-md">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-        
+
         <div className="flex items-center space-x-6">
           <div className="flex items-center space-x-3">
             <div className="h-8 w-8 rounded bg-cyan-500/10 border border-cyan-500/30 flex items-center justify-center">
@@ -23,10 +23,30 @@ export default function Navbar() {
             </div>
           </div>
 
-          <div className="hidden md:block">
-            <span className="px-3 py-1.5 rounded-md text-xs font-medium font-mono text-white bg-radar-850 border border-radar-700 shadow-sm">
+          {/* Navigation */}
+          <div className="hidden md:flex items-center gap-2">
+            <button
+              onClick={() => setActiveTab('investigation')}
+              className={`px-3 py-1.5 rounded-md text-xs font-medium font-mono flex items-center gap-2 border transition ${
+                activeTab === 'investigation'
+                  ? 'text-white bg-radar-850 border-radar-700 shadow-sm'
+                  : 'text-slate-500 border-transparent hover:text-slate-300 hover:bg-radar-900'
+              }`}
+            >
               Investigation
-            </span>
+            </button>
+
+            <button
+              onClick={() => setActiveTab('history')}
+              className={`px-3 py-1.5 rounded-md text-xs font-medium font-mono flex items-center gap-2 border transition ${
+                activeTab === 'history'
+                  ? 'text-white bg-radar-850 border-radar-700 shadow-sm'
+                  : 'text-slate-500 border-transparent hover:text-slate-300 hover:bg-radar-900'
+              }`}
+            >
+              <History className="h-3.5 w-3.5" />
+              Investigation History
+            </button>
           </div>
         </div>
 

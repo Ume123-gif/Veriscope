@@ -9,7 +9,7 @@ export async function fetchTransactionRisk(transactionId) {
     });
 
     if (response.status === 404) {
-      throw new Error(`Transaction ID "${transactionId}" was not found in the cluster.`);
+      throw new Error(`Transaction ID "${transactionId}" does not exist in the Veriscope transaction registry.`);
     }
 
     if (!response.ok) {
